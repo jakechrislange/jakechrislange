@@ -1,5 +1,5 @@
 - 👋 Hi, I’m @jakechrislange
-- 👀 I’m interested in finance, chess, and expensive coffee.
+- 👀 I’m interested in finance, chess, and AI/ML
 - 🌱 I’m currently learning the basics of Java and Python.
 -    I’m looking to collaborate on projects that would help me learn both the syntax and breadth of the languages.
 
