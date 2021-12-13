@@ -1,1 +1,22 @@
+public class InterestRateSwap {
 
+	public static double[] calcForwardRate(double[] spotRateArr) {
+
+		double[] forwardRateArr = new double[spotRateArr.length];
+
+		// #TODO -> calculate forward rates from spot rates
+
+		return forwardRateArr;
+
+	}
+
+	public static void main(String args[]) {
+
+		// #TODO take user input for spot rates
+		// #TODO call calcForwardRate method
+		// #TODO call method to calculate P1, P2, ...
+		// #TODO call method to find fixed rate from foward rates and P's.
+
+	}
+
+}
