@@ -1,7 +1,7 @@
 - 👋 Hi, I’m @jakechrislange
 - 👀 I’m interested in finance, chess, and AI/ML
 - 🌱 I’m currently further developing my skills in Java, as well as learning the basics of C++ and JavaScript.
--    I’m looking to collaborate on projects, specially related to financial derivatives.
+-    I’m looking to collaborate on projects, especially any related to financial derivatives, game design, and implentation of key data structures & algorithms.
 
 
 <!---
