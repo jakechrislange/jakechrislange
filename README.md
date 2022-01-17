@@ -1,3 +1,4 @@
+About Me
 - 👋 Hi, I’m @jakechrislange
 - 👀 I’m student at the University of Wisconsin-Madison studying Finance and Computer Science.
 - 🌱 I’m currently developing my skills in Java, as well as learning the basics of C++ and JavaScript.
