@@ -1,22 +1,174 @@
+// Jacob Lange
+// Interest Rate Swap
+// https://github.com/jakechrislange
+
+import java.util.*;
+
+/*
+ * @author Jacob Lange
+ * 
+ * Contains all the code for calculating the fixed rate for an interest rate swap.
+ */
 public class InterestRateSwap {
 
-	public static double[] calcForwardRate(double[] spotRateArr) {
+    /*
+     * This method calculates one year forward rates from spot rates.
+     * 
+     * @param spotRates a linked list containing given spot rates for the swap.
+     * 
+     * @param lengthOfSwap the agreed number of years for the swap.
+     * 
+     * @return forwardRates a linked list containing the calculated forward rates.
+     */
+    public static LinkedList<Double> calcForwardRates(LinkedList<Double> spotRates,
+        int lengthOfSwap) {
 
-		double[] forwardRateArr = new double[spotRateArr.length];
+        LinkedList<Double> forwardRates = new LinkedList<>();
 
-		// #TODO -> calculate forward rates from spot rates
+        spotRates.add(0, 1.0); // Temporary element to account for 0 year spot rate of 0%
 
-		return forwardRateArr;
+        for (int i = 0; i < lengthOfSwap; ++i) {
+            forwardRates
+                .add((Math.pow(spotRates.get(i + 1), i + 1) / Math.pow(spotRates.get(i), i)) - 1);
+        }
 
-	}
+        spotRates.remove(0); // Removes temporary element
 
-	public static void main(String args[]) {
+        return forwardRates;
+    }
 
-		// #TODO take user input for spot rates
-		// #TODO call calcForwardRate method
-		// #TODO call method to calculate P1, P2, ...
-		// #TODO call method to find fixed rate from foward rates and P's.
+    /*
+     * This method calculates the fixed rate when there is a level notional amount.
+     * 
+     * @param swapRates a linked list containing given spot rates for the swap.
+     * 
+     * @param lengthOfSwap the agreed number of years for the swap.
+     * 
+     * @param forwardRates a linked list containing the calculated forward rates.
+     * 
+     * @return fixedRate the calculated fixed rate for the interest rate swap.
+     */
+    public static double calcForLevel(LinkedList<Double> swapRates, int lengthOfSwap,
+        LinkedList<Double> forwardRates) {
 
-	}
+        LinkedList<Double> pValues = new LinkedList<>();
+        double numerator = 0.0;
+        double denominator = 0.0;
+        double fixedRate = 0.0;
 
+        for (int i = 0; i < lengthOfSwap; ++i) {
+            pValues.add(Math.pow(swapRates.get(i), -(i + 1)));
+        }
+
+        for (int j = 0; j < lengthOfSwap; ++j) {
+            numerator = numerator + (pValues.get(j) * forwardRates.get(j));
+        }
+
+        for (int k = 0; k < lengthOfSwap; ++k) {
+            denominator = denominator + pValues.get(k);
+        }
+
+        fixedRate = numerator / denominator;
+
+        return fixedRate * 100;
+    }
+
+    /*
+     * This method calculates the fixed rate when there is a varying notional amount.
+     * 
+     * @param swapRates a linked list containing given spot rates for the swap.
+     * 
+     * @param @varyingNotionals a linked list containing the varying notional amounts.
+     * 
+     * @param forwardRates a linked list containing the calculated forward rates.
+     * 
+     * @param lengthOfSwap the agreed number of years for the swap.
+     * 
+     * @return fixedRate the calculated fixed rate for the interest rate swap.
+     */
+    public static double calcForVarying(LinkedList<Double> swapRates,
+        LinkedList<Double> varyingNotionals, LinkedList<Double> forwardRates, int lengthOfSwap) {
+
+        LinkedList<Double> pValues = new LinkedList<>();
+        double numerator = 0.0;
+        double denominator = 0.0;
+        double fixedRate = 0.0;
+
+        for (int i = 0; i < lengthOfSwap; ++i) {
+            pValues.add(Math.pow(swapRates.get(i), -(i + 1)));
+        }
+
+        for (int j = 0; j < lengthOfSwap; ++j) {
+            numerator =
+                numerator + (pValues.get(j) * forwardRates.get(j) * varyingNotionals.get(j));
+        }
+
+        for (int k = 0; k < lengthOfSwap; ++k) {
+            denominator = denominator + (pValues.get(k) * varyingNotionals.get(k));
+        }
+
+        fixedRate = numerator / denominator;
+
+        return fixedRate * 100;
+    }
+
+    /*
+     * The main method prompts the user for general information, makes method calls, and prints the
+     * final fixed interest rate.
+     * 
+     * @param args (unused)
+     */
+    public static void main(String args[]) {
+
+        LinkedList<Double> spotRates = new LinkedList<>();
+        LinkedList<Double> varyingNotionals = new LinkedList<>();
+        Scanner scan = new Scanner(System.in);
+        char varyOrLevel = 'X';
+        double fixedRate = 0.0;
+        double notionalAmount = 0.0;
+        double rate = 0.0;
+        int lengthOfSwap = 0;
+
+        System.out.println("Hello! Welcome to the interest rate swap. I will help find your fixed"
+            + " rate if you answer a few questions for me first!");
+
+        
+        System.out.print("How whole years is the swap?");
+        
+        do {
+        lengthOfSwap = scan.nextInt();
+        if (lengthOfSwap < 1) {
+            System.out.println("Enter a positive number of years");
+        }
+        }while (lengthOfSwap < 1);
+        
+        do {
+            System.out.println(
+                "Is this a varying (V) or level (L) notional amount swap?" + "(Enter V or L)");
+            varyOrLevel = scan.next().charAt(0);
+        } while (varyOrLevel != 'V' && varyOrLevel != 'L');
+
+        for (int i = 0; i < lengthOfSwap; ++i) {
+            System.out.println("Enter the " + (i + 1) + " year spot rate (%)");
+            rate = scan.nextDouble();
+            spotRates.add((rate / 100 + 1));
+        }
+
+        LinkedList<Double> forwardRates = calcForwardRates(spotRates, lengthOfSwap);
+
+        if (varyOrLevel == 'V') {
+            for (int i = 0; i < lengthOfSwap; ++i) {
+                System.out.println("Enter the " + (i + 1) + " year notional amount");
+                notionalAmount = scan.nextDouble();
+                varyingNotionals.add(notionalAmount);
+            }
+            fixedRate = calcForVarying(spotRates, varyingNotionals, forwardRates, lengthOfSwap);
+        } else {
+            fixedRate = calcForLevel(spotRates, lengthOfSwap, forwardRates);
+        }
+
+        System.out.print("Your fixed rate is about ");
+        System.out.printf("%.3f", fixedRate);
+        System.out.println("%");
+    }
 }
